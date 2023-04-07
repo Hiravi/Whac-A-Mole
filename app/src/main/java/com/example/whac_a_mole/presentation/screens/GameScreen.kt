@@ -29,11 +29,11 @@ fun GameScreen() {
     holes.addAll(
         (1..9).map {
 
-                when (it) {
-                    1, 3 -> Hole(height = PaddingValues(top = 64.dp))
-                    else -> Hole(height = PaddingValues(0.dp))
-                }
+            when (it) {
+                1, 3 -> Hole(height = PaddingValues(top = 64.dp))
+                else -> Hole(height = PaddingValues(0.dp))
             }
+        }
     )
 
 
@@ -83,24 +83,25 @@ fun GameScreen() {
                 }
             }
 
-            LaunchedEffect(holes) {
+            val scope = rememberCoroutineScope()
+
+            LaunchedEffect(key1 = holes) {
                 while (isRunning) {
-                    delay(Random.nextLong(200, 1000))
-                    val holeNumber = Random.nextInt(0, 8)
-                    val oldHole = holes[holeNumber]
-                    val holeWithMole = oldHole.copy(state = HoleState.Mole)
-                    holes[holeNumber] = holeWithMole
-                    delay(Random.nextLong(500, 1000))
-                    holes[holeNumber] = oldHole
+                    delay(Random.nextLong(350, 1200))
+
+                    scope.launch {
+                        val holeNumber = Random.nextInt(0, 8)
+                        val oldHole = holes[holeNumber]
+
+                        if (oldHole.state == HoleState.Hole) {
+                            val holeWithMole = oldHole.copy(state = HoleState.Mole)
+                            holes[holeNumber] = holeWithMole
+                            delay(Random.nextLong(800, 1500))
+                            holes[holeNumber] = oldHole
+                        }
+                    }
                 }
             }
         }
     }
 }
-
-fun moleJump(holes: List<Hole>) {
-    (1..Random.nextInt(1, 4)).forEach {
-
-    }
-}
-
