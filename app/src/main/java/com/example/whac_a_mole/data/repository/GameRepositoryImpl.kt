@@ -1,46 +1,53 @@
 package com.example.whac_a_mole.data.repository
 
-import android.content.Context
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.unit.dp
+import com.example.whac_a_mole.data.Game
 import com.example.whac_a_mole.domain.models.Hole
+
 import com.example.whac_a_mole.domain.repository.GameRepository
-import kotlinx.coroutines.delay
-import kotlin.random.Random
+import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
-class GameRepositoryImpl(context: Context) : GameRepository {
-    private var gameScore: Int = 0
-    private val holes = (1..9).map {
+class GameRepositoryImpl @Inject constructor(
+    private val currentGame: Game
+) : GameRepository {
 
-        when (it) {
-            1, 3 -> Hole(height = PaddingValues(top = 64.dp))
-            else -> Hole(height =PaddingValues(0.dp))
-        }
+    override fun getHoles(): Flow<List<Hole>> {
+        return currentGame.getHoles()
     }
 
-    override fun increaseScore() {
-        gameScore++
+    override suspend fun increaseScore() {
+        currentGame.increaseScore()
     }
 
     override fun setHighScore() {
         TODO("Not yet implemented")
     }
 
-    override fun getHoles(): List<Hole> {
-        return holes
-    }
 
-    override fun getScore(): Int {
-        return gameScore
-    }
+    override suspend fun getScore(): Int = currentGame.getGameScore()
 
     override fun getHighScore(): Int {
         TODO("Not yet implemented")
     }
 
-    override suspend fun moleAction() {
-        TODO("Not yet implemented")
+    override fun gameOver() {
+        currentGame.finishGame()
+    }
+
+    override suspend fun getGameStatus(): Boolean = currentGame.isRunning
+
+
+    override suspend fun hideMole(holeNumber: Int) {
+        currentGame.hideMole(holeNumber)
     }
 
 
+    override suspend fun showMole(holeNumber: Int) {
+        currentGame.showMole(holeNumber)
+    }
+
+
+    override suspend fun punchMole(holeNumber: Int) {
+        currentGame.punchMole(holeNumber)
+    }
 }

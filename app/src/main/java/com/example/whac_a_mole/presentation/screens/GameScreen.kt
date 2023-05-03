@@ -1,107 +1,72 @@
-import android.content.Context
-import android.os.CountDownTimer
-import androidx.compose.foundation.ExperimentalFoundationApi
+package com.example.whac_a_mole.presentation.screens
+
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.example.whac_a_mole.R
-import com.example.whac_a_mole.data.repository.GameRepositoryImpl
-import com.example.whac_a_mole.domain.models.Hole
 import com.example.whac_a_mole.domain.models.HoleState
-import com.example.whac_a_mole.presentation.components.HoleGridItem
+import com.example.whac_a_mole.presentation.HolesEvent
+import com.example.whac_a_mole.presentation.HolesState
+import com.example.whac_a_mole.presentation.components.HolesGrid
+import com.example.whac_a_mole.presentation.components.ScoreTable
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GameScreen() {
+fun GameScreen(
+    uiState: StateFlow<HolesState>,
+    onEvent: (HolesEvent) -> Unit
+) {
     var isRunning = true
+    val scope = rememberCoroutineScope()
+    val state = uiState.collectAsState()
 
-    val holes = remember { mutableStateListOf<Hole>() }
-    holes.addAll(
-        (1..9).map {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.Transparent,
+    ) {
+        HolesGrid(state = state, onEvent = onEvent)
 
-            when (it) {
-                1, 3 -> Hole(height = PaddingValues(top = 64.dp))
-                else -> Hole(height = PaddingValues(0.dp))
+        val currentTime = remember {
+            mutableStateOf(60)
+        }
+
+        LaunchedEffect(key1 = currentTime) {
+            while (isRunning) {
+                if (currentTime.value > 0) {
+                    delay(1000L)
+                    currentTime.value -= 1
+                } else isRunning = false
             }
         }
-    )
 
+        LaunchedEffect(Unit) {
+            val moles = (0..8).toMutableList()
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.Transparent,
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 60.dp, horizontal = 16.dp),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                LazyVerticalStaggeredGrid(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    columns = StaggeredGridCells.Fixed(3),
-                    content = {
-                        items(holes.size) { index ->
-                            HoleGridItem(
-                                hole = holes[index],
-                                onClick = {
-                                    if (holes[index].state == HoleState.Mole) {
-                                        val newHole =
-                                            holes[index].copy(state = HoleState.KickedMole)
-                                        holes[index] = newHole
-                                    }
-                                }
-                            )
-                        }
-                    },
-                )
-            }
+            while (isRunning) {
+                delay(Random.nextLong(400, 1200))
 
-            val currentTime = remember {
-                mutableStateOf(60)
-            }
+                scope.launch {
+                    val holeNumber = moles.random()
+                    moles.remove(holeNumber)
 
-            LaunchedEffect(key1 = currentTime) {
-                while (isRunning) {
-                    if (currentTime.value > 0) {
-                        delay(1000L)
-                        currentTime.value -= 1
-                    } else isRunning = false
-                }
-            }
-
-            val scope = rememberCoroutineScope()
-
-            LaunchedEffect(key1 = holes) {
-                while (isRunning) {
-                    delay(Random.nextLong(350, 1200))
-
-                    scope.launch {
-                        val holeNumber = Random.nextInt(0, 8)
-                        val oldHole = holes[holeNumber]
-
-                        if (oldHole.state == HoleState.Hole) {
-                            val holeWithMole = oldHole.copy(state = HoleState.Mole)
-                            holes[holeNumber] = holeWithMole
-                            delay(Random.nextLong(800, 1500))
-                            holes[holeNumber] = oldHole
-                        }
+                    if (state.value.holes[holeNumber].holeState == HoleState.Hole) {
+                        onEvent.invoke(HolesEvent.MoleAppears(holeNumber = holeNumber))
                     }
+                    delay(700)
+
+                    onEvent.invoke(HolesEvent.EmptyHole(holeNumber = holeNumber))
+
+                    delay(300)
+                    moles.add(holeNumber)
                 }
             }
+
         }
     }
 }
+

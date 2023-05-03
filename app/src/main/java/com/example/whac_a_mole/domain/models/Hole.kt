@@ -1,11 +1,11 @@
 package com.example.whac_a_mole.domain.models
 
 import androidx.compose.foundation.layout.PaddingValues
-import com.example.whac_a_mole.R
 
 data class Hole(
+    val holeNumber: Int,
     var height: PaddingValues,
-    var state: HoleState = HoleState.Hole,
+    var holeState: HoleState = HoleState.Hole,
 )
 
 sealed class HoleState() {
