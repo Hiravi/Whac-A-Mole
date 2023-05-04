@@ -1,7 +1,6 @@
 package com.example.whac_a_mole.presentation
 
 sealed class HolesEvent {
-    object IncrementCount : HolesEvent()
     data class EmptyHole(
         val holeNumber: Int
     ) : HolesEvent()

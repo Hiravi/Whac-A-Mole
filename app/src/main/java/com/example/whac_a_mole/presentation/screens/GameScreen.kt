@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.example.whac_a_mole.domain.models.HoleState
 import com.example.whac_a_mole.presentation.HolesEvent
 import com.example.whac_a_mole.presentation.HolesState
@@ -19,21 +20,32 @@ import kotlin.random.Random
 @Composable
 fun GameScreen(
     uiState: StateFlow<HolesState>,
-    onEvent: (HolesEvent) -> Unit
+    onEvent: (HolesEvent) -> Unit,
+    onBack: () -> Unit,
 ) {
     var isRunning = true
     val scope = rememberCoroutineScope()
     val state = uiState.collectAsState()
+    val currentTime = remember {
+        mutableStateOf(60)
+    }
+
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Transparent,
     ) {
-        HolesGrid(state = state, onEvent = onEvent)
-
-        val currentTime = remember {
-            mutableStateOf(60)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            ScoreTable(state = state, time = currentTime.value)
+            HolesGrid(state = state, onEvent = onEvent)
         }
+
+
 
         LaunchedEffect(key1 = currentTime) {
             while (isRunning) {
@@ -65,7 +77,6 @@ fun GameScreen(
                     moles.add(holeNumber)
                 }
             }
-
         }
     }
 }

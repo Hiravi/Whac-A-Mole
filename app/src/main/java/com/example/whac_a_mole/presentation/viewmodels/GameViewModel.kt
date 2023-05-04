@@ -54,11 +54,6 @@ class GameViewModel @Inject constructor(
                     getHoles()
                 }
             }
-            is HolesEvent.IncrementCount -> {
-                viewModelScope.launch {
-                    repository.increaseScore()
-                }
-            }
         }
     }
 
@@ -71,5 +66,13 @@ class GameViewModel @Inject constructor(
                 )
             }
             .launchIn(viewModelScope)
+
+        viewModelScope.launch {
+            _uiState.value = uiState.value.copy(
+                score = repository.getScore()
+            )
+        }
     }
+
+
 }

@@ -14,11 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.whac_a_mole.R
-import com.example.whac_a_mole.boldPixelFont
 import com.example.whac_a_mole.pixelFont
 
 @Composable
-fun StartScreen(bestScore: Int) {
+fun StartScreen(
+    bestScore: Int,
+    onPlayGame: () -> Unit,
+) {
     val interactionSourcePlay = remember {
         MutableInteractionSource()
     }
@@ -51,12 +53,12 @@ fun StartScreen(bestScore: Int) {
                     interactionSource = interactionSourcePlay,
                     indication = null,
                     onClick = {
-
+                        onPlayGame.invoke()
                     }
                 ),
                 painter = painterResource(
-                    id = if (isStartButtonPressed) R.drawable.play_button_pressed
-                        else R.drawable.play_button),
+                    id = if (isStartButtonPressed) R.drawable.button_play_pressed
+                        else R.drawable.button_play),
                 contentDescription = "Play button",
             )
 
@@ -74,7 +76,7 @@ fun StartScreen(bestScore: Int) {
                         )
                         Text(
                             text = "$bestScore",
-                            fontFamily = boldPixelFont,
+                            fontFamily = pixelFont,
                             fontSize = 48   .sp,
                             color = Color(255, 238, 131)
                         )
@@ -90,8 +92,8 @@ fun StartScreen(bestScore: Int) {
                         }
                     ),
                     painter = painterResource(
-                        id = if (isRulesButtonPressed) R.drawable.rules_button_pressed
-                            else R.drawable.rules_button
+                        id = if (isRulesButtonPressed) R.drawable.button_help_pressed
+                            else R.drawable.button_help
                     ),
                     contentDescription = "Rules",
                 )

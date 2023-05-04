@@ -49,6 +49,7 @@ class Game {
     suspend fun punchMole(holeNumber: Int) {
         if (holes[holeNumber].holeState == HoleState.Mole) {
             _holes[holeNumber] = holes[holeNumber].copy(holeState = HoleState.KickedMole)
+            increaseScore()
         }
     }
 
