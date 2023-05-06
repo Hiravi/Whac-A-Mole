@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -12,13 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.whac_a_mole.R
+import com.example.whac_a_mole.pixelFont
 
 @Composable
 fun GameFinishScreen(
     onRestart: () -> Unit,
     onHome: () -> Unit,
+    getBestScore: () -> Int,
 ) {
     val interactionSourceHome = remember {
         MutableInteractionSource()
@@ -32,8 +36,7 @@ fun GameFinishScreen(
 
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (table, rowButtons, sheet) = createRefs()
-
+        val (table, rowButtons, sheet, score) = createRefs()
 
         Image(
             modifier = Modifier
@@ -51,12 +54,24 @@ fun GameFinishScreen(
             modifier = Modifier
                 .padding(48.dp)
                 .constrainAs(sheet) {
-                top.linkTo(table.top)
-                start.linkTo(table.start)
-                end.linkTo(table.end)
-            },
+                    top.linkTo(table.top)
+                    start.linkTo(table.start)
+                    end.linkTo(table.end)
+                },
             painter = painterResource(id = R.drawable.sheet_result),
             contentDescription = "Result sheet",
+        )
+
+        Text(
+            modifier = Modifier.constrainAs(score) {
+                top.linkTo(sheet.top)
+                bottom.linkTo(sheet.bottom)
+                start.linkTo(sheet.start)
+                end.linkTo(sheet.end)
+            },
+            text = "${getBestScore.invoke()}",
+            fontSize = 64.sp,
+            fontFamily = pixelFont
         )
 
         Row(

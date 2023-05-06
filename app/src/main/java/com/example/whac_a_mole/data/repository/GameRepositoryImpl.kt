@@ -1,5 +1,6 @@
 package com.example.whac_a_mole.data.repository
 
+import android.app.Application
 import com.example.whac_a_mole.data.Game
 import com.example.whac_a_mole.domain.models.Hole
 
@@ -8,7 +9,7 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class GameRepositoryImpl @Inject constructor(
-    private val currentGame: Game
+    private val currentGame: Game,
 ) : GameRepository {
 
     override fun getHoles(): Flow<List<Hole>> {
@@ -19,16 +20,8 @@ class GameRepositoryImpl @Inject constructor(
         currentGame.increaseScore()
     }
 
-    override fun setHighScore() {
-        TODO("Not yet implemented")
-    }
-
-
     override suspend fun getScore(): Int = currentGame.getGameScore()
 
-    override fun getHighScore(): Int {
-        TODO("Not yet implemented")
-    }
 
     override fun gameOver() {
         currentGame.finishGame()
@@ -49,5 +42,13 @@ class GameRepositoryImpl @Inject constructor(
 
     override suspend fun punchMole(holeNumber: Int) {
         currentGame.punchMole(holeNumber)
+    }
+
+    override fun getBestScore(appContext: Application): Int {
+        return currentGame.getBestScore(appContext)
+    }
+
+    override fun updateBestScore(appContext: Application, newValue: Int) {
+        currentGame.updateBestScore(appContext, newValue)
     }
 }

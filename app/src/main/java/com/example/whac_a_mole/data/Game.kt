@@ -1,5 +1,7 @@
 package com.example.whac_a_mole.data
 
+import android.app.Application
+import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
 import com.example.whac_a_mole.domain.models.Hole
@@ -9,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 
-class Game {
+class Game() {
     var isRunning = true
     private var gameScore: Int = 0
     private val _holes = (0..8).map {
@@ -55,5 +57,23 @@ class Game {
 
     suspend fun increaseScore() {
         gameScore++
+    }
+
+    fun getBestScore(appContext: Application) : Int {
+        val pref = appContext.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        return pref.getInt("bestScore", 0)
+    }
+
+    fun updateBestScore(appContext: Application, newValue: Int) {
+        val pref = appContext.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        val editor = pref.edit()
+
+        val currentBestScore = getBestScore(appContext)
+        if (currentBestScore < newValue) {
+            editor.putInt("bestScore", newValue)
+            editor.apply()
+        }
+
+
     }
 }

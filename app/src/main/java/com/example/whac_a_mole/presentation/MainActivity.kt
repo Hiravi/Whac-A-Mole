@@ -20,6 +20,7 @@ import com.example.whac_a_mole.R
 import com.example.whac_a_mole.presentation.screens.GameFinishScreen
 import com.example.whac_a_mole.presentation.screens.StartScreen
 import com.example.whac_a_mole.presentation.viewmodels.GameViewModel
+import com.example.whac_a_mole.presentation.viewmodels.MainViewModel
 import com.example.whac_a_mole.ui.theme.WhacAMoleTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,6 +38,7 @@ class MainActivity : ComponentActivity() {
                         contentDescription = "background",
                         contentScale = ContentScale.FillBounds
                     )
+                    val mainViewModel = hiltViewModel<MainViewModel>()
                     val viewModel = hiltViewModel<GameViewModel>()
                     val state = viewModel.uiState
 
@@ -46,7 +48,7 @@ class MainActivity : ComponentActivity() {
                         composable("start") {
                             StartScreen(
                                 onPlayGame = { navController.navigate("game") },
-                                bestScore = 0
+                                getBestScore = mainViewModel::getBestScore,
                             )
                         }
                         composable("game") {
@@ -54,13 +56,16 @@ class MainActivity : ComponentActivity() {
                                 onFinish = { navController.navigate("finish") },
                                 onPause = { navController.clearBackStack("start") },
                                 uiState = state,
-                                onEvent = viewModel::onEvent
+                                onEvent = viewModel::onEvent,
+                                updateScore = mainViewModel::updateBestScore,
+                                getBestScore = mainViewModel::getBestScore,
                             )
                         }
                         composable("finish") {
                             GameFinishScreen(
                                 onHome = { navController.navigate("start") },
                                 onRestart = { navController.navigate("game") },
+                                getBestScore = mainViewModel::getBestScore,
                             )
                         }
                     }

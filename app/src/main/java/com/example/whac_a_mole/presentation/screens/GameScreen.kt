@@ -22,6 +22,8 @@ fun GameScreen(
     onEvent: (HolesEvent) -> Unit,
     onFinish: () -> Unit,
     onPause: () -> Unit,
+    updateScore: (Int) -> Unit,
+    getBestScore: () -> Int,
 ) {
     var isRunning = true
     val scope = rememberCoroutineScope()
@@ -56,9 +58,6 @@ fun GameScreen(
             onEvent = onEvent
         )
 
-
-
-
         LaunchedEffect(key1 = currentTime) {
             while (isRunning) {
                 if (currentTime.value > 0) {
@@ -66,6 +65,9 @@ fun GameScreen(
                     currentTime.value -= 1
                 } else {
                     isRunning = false
+
+                    if (state.value.score > getBestScore.invoke()) updateScore.invoke(state.value.score)
+
                     onFinish.invoke()
                 }
             }

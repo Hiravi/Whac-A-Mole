@@ -18,7 +18,7 @@ import com.example.whac_a_mole.pixelFont
 
 @Composable
 fun StartScreen(
-    bestScore: Int,
+    getBestScore: () -> Int,
     onPlayGame: () -> Unit,
 ) {
     val interactionSourcePlay = remember {
@@ -75,9 +75,9 @@ fun StartScreen(
                             contentDescription = "Best score",
                         )
                         Text(
-                            text = "$bestScore",
+                            text = "${getBestScore.invoke()}",
                             fontFamily = pixelFont,
-                            fontSize = 48   .sp,
+                            fontSize = 48.sp,
                             color = Color(255, 238, 131)
                         )
                     }

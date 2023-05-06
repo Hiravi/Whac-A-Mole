@@ -1,5 +1,6 @@
 package com.example.whac_a_mole.di
 
+import android.app.Application
 import com.example.whac_a_mole.data.Game
 import com.example.whac_a_mole.data.repository.GameRepositoryImpl
 import com.example.whac_a_mole.domain.repository.GameRepository
