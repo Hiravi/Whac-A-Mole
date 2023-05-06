@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import com.example.whac_a_mole.R
+import com.example.whac_a_mole.presentation.screens.GameFinishScreen
 import com.example.whac_a_mole.presentation.screens.StartScreen
 import com.example.whac_a_mole.presentation.viewmodels.GameViewModel
 import com.example.whac_a_mole.ui.theme.WhacAMoleTheme
@@ -50,22 +51,21 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("game") {
                             GameScreen(
-                                onBack = { navController.clearBackStack("game") },
+                                onFinish = { navController.navigate("finish") },
+                                onPause = { navController.clearBackStack("start") },
                                 uiState = state,
                                 onEvent = viewModel::onEvent
+                            )
+                        }
+                        composable("finish") {
+                            GameFinishScreen(
+                                onHome = { navController.navigate("start") },
+                                onRestart = { navController.navigate("game") },
                             )
                         }
                     }
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    WhacAMoleTheme {
-
     }
 }

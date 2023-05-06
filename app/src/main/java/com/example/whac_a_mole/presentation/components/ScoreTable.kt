@@ -19,10 +19,11 @@ import com.example.whac_a_mole.presentation.HolesState
 
 @Composable
 fun ScoreTable(
+    modifier: Modifier = Modifier,
     state: State<HolesState>,
     time: Int
 ) {
-    Box() {
+    Box(modifier = modifier) {
         // Draw the image
         Image(painter = painterResource(id = R.drawable.table), contentDescription = "Score table")
         val pixelTypeface = LocalContext.current.resources.getFont(R.font.pixel_font)

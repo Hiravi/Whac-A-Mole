@@ -2,10 +2,7 @@ package com.example.whac_a_mole.presentation.components
 
 import android.media.SoundPool
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -24,6 +21,7 @@ import com.example.whac_a_mole.presentation.HolesState
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HolesGrid(
+    modifier: Modifier = Modifier,
     state: State<HolesState>,
     onEvent: (HolesEvent) -> Unit,
 ) {
@@ -40,14 +38,12 @@ fun HolesGrid(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 60.dp, horizontal = 16.dp),
-        contentAlignment = Alignment.BottomCenter
+        modifier = modifier.fillMaxWidth()
     ) {
         LazyVerticalStaggeredGrid(
             horizontalArrangement = Arrangement.SpaceEvenly,
             columns = StaggeredGridCells.Fixed(3),
+            userScrollEnabled = false,
             content = {
                 items(state.value.holes) { hole ->
                     HoleGridItem(

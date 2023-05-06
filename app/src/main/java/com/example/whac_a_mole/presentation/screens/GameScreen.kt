@@ -1,12 +1,11 @@
 package com.example.whac_a_mole.presentation.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Surface
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.whac_a_mole.domain.models.HoleState
 import com.example.whac_a_mole.presentation.HolesEvent
 import com.example.whac_a_mole.presentation.HolesState
@@ -21,7 +20,8 @@ import kotlin.random.Random
 fun GameScreen(
     uiState: StateFlow<HolesState>,
     onEvent: (HolesEvent) -> Unit,
-    onBack: () -> Unit,
+    onFinish: () -> Unit,
+    onPause: () -> Unit,
 ) {
     var isRunning = true
     val scope = rememberCoroutineScope()
@@ -30,20 +30,32 @@ fun GameScreen(
         mutableStateOf(60)
     }
 
+    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        val (table, grid) = createRefs()
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Color.Transparent,
-    ) {
-        Column(
+        createVerticalChain(table, grid, chainStyle = ChainStyle.Spread)
+
+        ScoreTable(
+            modifier = Modifier.constrainAs(table) {
+                centerVerticallyTo(parent)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            },
+            state = state,
+            time = currentTime.value
+        )
+        HolesGrid(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 100.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            ScoreTable(state = state, time = currentTime.value)
-            HolesGrid(state = state, onEvent = onEvent)
-        }
+                .padding(start = 8.dp)
+                .constrainAs(grid) {
+                centerVerticallyTo(parent)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            },
+            state = state,
+            onEvent = onEvent
+        )
+
 
 
 
@@ -52,7 +64,10 @@ fun GameScreen(
                 if (currentTime.value > 0) {
                     delay(1000L)
                     currentTime.value -= 1
-                } else isRunning = false
+                } else {
+                    isRunning = false
+                    onFinish.invoke()
+                }
             }
         }
 
