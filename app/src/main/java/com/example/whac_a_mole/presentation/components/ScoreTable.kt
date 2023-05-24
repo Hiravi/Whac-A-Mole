@@ -36,7 +36,7 @@ fun ScoreTable(
                 typeface = pixelTypeface
             }
             drawContext.canvas.nativeCanvas.drawText("Score:  ${state.value.score}", 50f, 90f, paint)
-            drawContext.canvas.nativeCanvas.drawText("Time  $time", 50f, 245f, paint)
+            drawContext.canvas.nativeCanvas.drawText("Time:  $time", 50f, 245f, paint)
         }
     }
 }

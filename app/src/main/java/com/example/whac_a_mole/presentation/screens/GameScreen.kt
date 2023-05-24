@@ -21,7 +21,6 @@ fun GameScreen(
     uiState: StateFlow<HolesState>,
     onEvent: (HolesEvent) -> Unit,
     onFinish: () -> Unit,
-    onPause: () -> Unit,
     updateScore: (Int) -> Unit,
     getBestScore: () -> Int,
 ) {
